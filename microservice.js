@@ -1,9 +1,12 @@
 const express = require('express');
 const { Pool } = require('pg');
+const bodyParser = require('body-parser');
 require('dotenv').config();
+
 
 const app = express();
 const PORT2 = process.env.PORT2;
+app.use(bodyParser.json());
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -33,12 +36,8 @@ const pool = new Pool({
 })();
 
 app.post('/createuser', async (req, res) => {
-  const userdata = req.body;
-  const username = userdata.username;
-  const password = userdata.password;
-  const nombre = userdata.nombre;
-  const apellido = userdata.apellido;
-  const createdAt = new Date();
+  const { username, password, nombre, apellido } = req.body;
+  const createdAt = new Date(); // Genera la fecha actual
 
   try {
     const client = await pool.connect();
@@ -81,5 +80,5 @@ app.delete('/delete/:id', async (req, res) => {
 
 
 app.listen(PORT2, () => {
-  console.log(`Servidor de números aleatorios corriendo en http://localhost:${PORT2}`);
+  console.log(`Servidor corriendo en http://localhost:${PORT2}`);
 });

@@ -1,10 +1,13 @@
 const express = require('express');
 const axios = require('axios');
 require('dotenv').config();
+const bodyParser = require('body-parser');
+
 
 const app = express();
 const PORT = process.env.PORT;
 
+app.use(bodyParser.json());
 app.use(express.json());
 
 const jwt = require('jsonwebtoken');
@@ -37,20 +40,20 @@ const generateToken = (user) => {
 
 app.post('/createuser', async (req, res) => {
   // Declara las variables antes de utilizarlas
-  const username = "nicolas";
+  const username = "joaquin";
   const password = "1234";
-  const nombre = "nicolas";
-  const apellido = "nievas";
+  const nombre = "joaquin";
+  const apellido = "gallardo";
+  const userdata = {username, password, nombre, apellido};
 
-  const userdata = { username, password, nombre, apellido };
 
-  // Validar datos
+  // Validar datos provenientes del front
   
   try {
-    const response = await axios.post('http://localhost:4002/createuser', { userdata });
-    res.status(200).json(response.data);
+    const response = await axios.post('http://localhost:4002/createuser', userdata);
+    res.status(200).json(response.data); 
   } catch (error) {
-    res.status(401).json({ error: 'Credenciales incorrectas' });
+    res.status(401).json({ error: 'Error al enviar los datos' });
   }
 });
 
