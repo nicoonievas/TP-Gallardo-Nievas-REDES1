@@ -44,10 +44,10 @@ const generateToken = (user) => {
 
 
 app.post('/createuser', async (req, res) => {
-  const { username, password, nombre, apellido } = req.body;
+  const { username, password, nombre, apellido, rol, estado } = req.body;
 
-//validacion de campos
-  if (!username || !password || !nombre || !apellido) {
+// validacion de campos
+  if (!username || !password || !nombre || !apellido || !rol || !estado) {
     return res.status(400).json({ error: 'Faltan campos obligatorios' });
   }
 
@@ -56,7 +56,9 @@ app.post('/createuser', async (req, res) => {
       username,
       password,
       nombre,
-      apellido
+      apellido,
+      rol,
+      estado
     });
 
     res.status(200).json(response.data); 
@@ -69,6 +71,22 @@ app.post('/createuser', async (req, res) => {
     }
   }
 });
+
+app.get('/getusers', async (req, res) => {
+  try {
+    const response = await axios.get('http://localhost:4003/listausuarios');
+    const registros = response.data;
+    res.json({ registros });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener los registros' });
+  }
+});
+
+
+
+
+
 
 
 app.post('/login', (req, res) => {

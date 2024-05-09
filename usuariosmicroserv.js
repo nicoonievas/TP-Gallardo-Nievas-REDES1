@@ -42,12 +42,14 @@ app.post('/createuser', async (req, res) => {
   const password = datacliente.password;
   const nombre = datacliente.nombre;
   const apellido = datacliente.apellido;
+  const rol = datacliente.rol;
+  const estado = datacliente.estado;
   const createdAt = new Date(); // Genera la fecha actual
 
 
   try {
     const client = await pool.connect();
-    await client.query('INSERT INTO users (username, password, nombre, apellido, created_at) VALUES ($1, $2, $3, $4, $5)', [username, password, nombre, apellido, createdAt]);
+    await client.query('INSERT INTO users (username, password, nombre, apellido, rol, estado, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)', [username, password, nombre, apellido, rol, estado, createdAt]);
     client.release();
     res.status(200).json({ message: "Usuario creado con éxito" });
     // res.json({ message: "Usuario creado con éxito" });
