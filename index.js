@@ -44,21 +44,29 @@ const generateToken = (user) => {
 
 
 app.post('/createuser', async (req, res) => {
-  // Declara las variables antes de utilizarlas
-  // const username = "joaquin";
-  // const password = "1234";
-  // const nombre = "joaquin";
-  // const apellido = "gallardo";
-  // const userdata = {username, password, nombre, apellido};
-  
+  const { username, password, nombre, apellido } = req.body;
 
-  // Validar datos provenientes del front
-  
+//validacion de campos
+  if (!username || !password || !nombre || !apellido) {
+    return res.status(400).json({ error: 'Faltan campos obligatorios' });
+  }
+
   try {
-    const response = await axios.post('http://localhost:4002/createuser', req.body);
+    const response = await axios.post('http://localhost:4002/createuser', {
+      username,
+      password,
+      nombre,
+      apellido
+    });
+
     res.status(200).json(response.data); 
+    
   } catch (error) {
-    res.status(401).json({ error: 'Error al enviar los datos' });
+    if (error.response) {
+      res.status(error.response.status).json({ error: error.response.data.error });
+    } else {
+      res.status(500).json({ error: 'Error interno del servidor' });
+    }
   }
 });
 

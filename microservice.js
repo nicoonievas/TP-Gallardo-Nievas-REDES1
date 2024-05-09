@@ -37,7 +37,7 @@ const pool = new Pool({
 
 app.post('/createuser', async (req, res) => {
   const datacliente = req.body;
-  // const { username, password, nombre, apellido } = req.body;
+
   const username = datacliente.username;
   const password = datacliente.password;
   const nombre = datacliente.nombre;
@@ -49,7 +49,8 @@ app.post('/createuser', async (req, res) => {
     const client = await pool.connect();
     await client.query('INSERT INTO users (username, password, nombre, apellido, created_at) VALUES ($1, $2, $3, $4, $5)', [username, password, nombre, apellido, createdAt]);
     client.release();
-    res.json({ message: "Usuario creado con éxito" });
+    res.status(200).json({ message: "Usuario creado con éxito" });
+    // res.json({ message: "Usuario creado con éxito" });
   } catch (err) {
     console.error('Error en la ejecución de la query', err);
     res.status(500).json({ error: 'Error de servidor' });
