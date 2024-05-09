@@ -36,8 +36,14 @@ const pool = new Pool({
 })();
 
 app.post('/createuser', async (req, res) => {
-  const { username, password, nombre, apellido } = req.body;
+  const datacliente = req.body;
+  // const { username, password, nombre, apellido } = req.body;
+  const username = datacliente.username;
+  const password = datacliente.password;
+  const nombre = datacliente.nombre;
+  const apellido = datacliente.apellido;
   const createdAt = new Date(); // Genera la fecha actual
+
 
   try {
     const client = await pool.connect();
