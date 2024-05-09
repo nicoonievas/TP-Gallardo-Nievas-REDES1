@@ -19,9 +19,9 @@ const pool = new Pool({
 app.get('/listausuarios', async (req, res) => {
   try {
     const client = await pool.connect();
-    const result = await client.query('SELECT * FROM users');
+    const result = await client.query('SELECT * FROM users WHERE estado = true');
     client.release();
-    res.json(result.data);
+    res.json(result.rows);
   } catch (err) {
     console.error('Error al ejecutar la query', err);
     res.status(500).json({ error: 'Error al obtener los registros' });

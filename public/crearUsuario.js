@@ -32,13 +32,16 @@ async function crearUsuario(event) {
     }
 }
 
-async function updateTablaPapelera () {
+async function updateTablaPapelera() {
     try {
         const response = await axios.get('http://localhost:4000/getusers');
-        const usuarios = response.data;
-    
+        const usuarios = response.data.registros; 
+        
+        console.log(usuarios);
         const tbody = document.querySelector('#tablaPapelera tbody');
-    
+        
+        tbody.innerHTML = '';
+
         usuarios.forEach(usuario => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -46,7 +49,7 @@ async function updateTablaPapelera () {
                 <td>${usuario.apellido}</td>
                 <td>${usuario.username}</td>
                 <td>
-                    <!--botones de acción-->
+                    <!-- botones de acción -->
                 </td>
             `;
             tbody.appendChild(tr);

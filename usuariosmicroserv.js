@@ -61,18 +61,6 @@ app.post('/createuser', async (req, res) => {
 
 
 
-app.get('/all_registers', async (req, res) => {
-  try {
-    const client = await pool.connect();
-    const result = await client.query('SELECT * FROM generated_numbers');
-    client.release();
-    res.json(result.rows);
-  } catch (err) {
-    console.error('Error al ejecutar la query', err);
-    res.status(500).json({ error: 'Error al obtener los registros' });
-  }
-});
-
 
 app.delete('/delete/:id', async (req, res) => {
   const id = req.params.id;
