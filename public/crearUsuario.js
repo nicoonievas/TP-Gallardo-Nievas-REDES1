@@ -32,24 +32,31 @@ async function crearUsuario(event) {
     }
 }
 
-async function updateTablaPapelera() {
+async function updateTablaUsuarios() {
     try {
         const response = await axios.get('http://localhost:4000/getusers');
         const usuarios = response.data.registros; 
         
         console.log(usuarios);
-        const tbody = document.querySelector('#tablaPapelera tbody');
+        const tbody = document.querySelector('#tablaUsuarios tbody');
         
         tbody.innerHTML = '';
 
         usuarios.forEach(usuario => {
             const tr = document.createElement('tr');
+            
+            if (usuario.estado == true) {
+                estado = "Desactivar"
+            }
+            else {
+                estado = "Activar"
+            }
             tr.innerHTML = `
                 <td>${usuario.nombre}</td>
                 <td>${usuario.apellido}</td>
                 <td>${usuario.username}</td>
                 <td>
-                <button onclick="cambiarEstado(${usuario.id}, event)" style="background-color: #4A1FA6; color:white;">Activar</button>
+                <button onclick="cambiarEstado(${usuario.id}, event)" style="background-color: #4A1FA6; color:white;">${estado}</button>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -66,7 +73,7 @@ async function cambiarEstado(id, event) {
     try {
         const confirmacion = confirm('¿Estás seguro de que deseas modificar el estado de este cliente?');
         if (confirmacion) {
-            const response = await axios.put('http://localhost:4000/estado' + '/' + id);
+            const response = await axios.put('http://localhost:4000/estado/' + id);
             const data = response.data
             alert(data.message);
         }
@@ -74,5 +81,6 @@ async function cambiarEstado(id, event) {
         console.error(error);
         alert("Error al cambiar el estado");
     }
-    location.reload();
+    updateTablaUsuarios();
+    // location.reload();
 }

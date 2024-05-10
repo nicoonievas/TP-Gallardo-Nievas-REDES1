@@ -19,7 +19,7 @@ const pool = new Pool({
 app.get('/listausuarios', async (req, res) => {
   try {
     const client = await pool.connect();
-    const result = await client.query('SELECT * FROM users WHERE estado = true');
+    const result = await client.query('SELECT * FROM users WHERE estado is not null');
     client.release();
     res.json(result.rows);
   } catch (err) {

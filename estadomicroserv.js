@@ -20,6 +20,7 @@ const pool = new Pool({
 
 app.put('/estado/:id', async (req, res) => {
   const idUsuario = req.params.id;
+  
   try { 
     const client = await pool.connect();
     await client.query('UPDATE users SET estado = false WHERE id = $1', [idUsuario] );

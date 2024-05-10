@@ -100,7 +100,7 @@ app.post('/login', (req, res) => {
 
 app.put('/estado/:id', async (req, res) => {
   const idUsuario = req.params.id;
-  const estado= true;
+  const estado= false;
   try {
     // Realiza la solicitud PUT sin pasar ningún dato en el cuerpo de la solicitud
     const response  = await axios.put(`http://localhost:4004/estado/${idUsuario}`, { estado });

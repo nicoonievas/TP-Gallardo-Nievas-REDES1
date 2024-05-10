@@ -44,20 +44,20 @@
               <button type="submit" class="btn btn-primary" onclick="crearUsuario(event)">Crear Usuario</button>
               <hr>
               <a href="./iniciarSesion.html" class="btn btn-primary">Iniciar Sesión</a>
-              <button type="button" class="btn btn-success" data-bs-toggle="modal" onclick="updateTablaPapelera()"
+              <button type="button" class="btn btn-success" data-bs-toggle="modal" onclick="updateTablaUsuarios()"
                     data-bs-target="#staticBackdrop"><i class="fa-regular fa-trash-can"></i>
-                    Papelera
+                    Listado de Usuarios
                 </button>
                 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                 aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Papelera Clientes</h1>
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Listado de Usuarios</h1>
                             <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <table class="table" id="tablaPapelera">
+                            <table class="table" id="tablaUsuarios">
                                 <thead>
                                     <tr>
                                         <th scope="col">Nombre</th>
