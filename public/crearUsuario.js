@@ -49,7 +49,7 @@ async function updateTablaPapelera() {
                 <td>${usuario.apellido}</td>
                 <td>${usuario.username}</td>
                 <td>
-                    <!-- botones de acción -->
+                <button onclick="cambiarEstado(${usuario.id}, event)" style="background-color: #4A1FA6; color:white;">Activar</button>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -58,4 +58,21 @@ async function updateTablaPapelera() {
         console.error(error);
         alert("Error al obtener los datos");
     }
+}
+
+
+async function cambiarEstado(id, event) {
+    event.preventDefault();
+    try {
+        const confirmacion = confirm('¿Estás seguro de que deseas modificar el estado de este cliente?');
+        if (confirmacion) {
+            const response = await axios.put('http://localhost:4000/estado' + '/' + id);
+            const data = response.data
+            alert(data.message);
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Error al cambiar el estado");
+    }
+    location.reload();
 }
