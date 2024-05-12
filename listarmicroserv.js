@@ -28,6 +28,19 @@ app.get('/listausuarios', async (req, res) => {
   }
 });
 
+app.get('/listausuarios/:id', async (req, res) => {
+  const id = req.params.id;
+  try {
+    const client = await pool.connect();
+    const result = await client.query('SELECT * FROM users WHERE id = $1', [id]);
+    client.release();
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error al ejecutar la query', err);
+    res.status(500).json({ error: 'Error al obtener el registro' });
+  }
+});
+
 
 // app.delete('/delete/:id', async (req, res) => {
 //   const id = req.params.id;

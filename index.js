@@ -74,17 +74,69 @@ app.post('/createuser', async (req, res) => {
 
 
 
-
 app.get('/getusers', async (req, res) => {
   try {
     const response = await axios.get('http://localhost:4003/listausuarios');
-    const registros = response.data;
+    let registros = response.data;
     res.json({ registros });
+    return registros;
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error al obtener los registros' });
   }
 });
+
+app.get('/getusers/:id', async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const response = await axios.get(`http://localhost:4003/listausuarios/${id}`);
+    let registros = response.data;
+    res.json({ registros });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener los registros' });
+  }
+});
+
+app.put('/estado/:id', async (req, res) => {
+  const idUsuario = req.params.id;
+  try {
+    const responseusuario = await axios.get(`http://localhost:4003/listausuarios/${idUsuario}`);
+    
+    let estado= responseusuario.data.estado;
+    if (estado == true) {
+      estado = false;
+    } else {
+      estado = true;
+    }
+
+    const response  = await axios.put(`http://localhost:4004/estado/${idUsuario}`, { estado });
+    res.status(200).json(response.data)
+    // res.json({ responseusuario });
+ 
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener los registros' });
+  }
+ 
+  // try {
+  //   // Realiza la solicitud PUT sin pasar ningún dato en el cuerpo de la solicitud
+  //   const response  = await axios.put(`http://localhost:4004/estado/${idUsuario}`, { estado });
+  //   res.status(200).json(response.data)
+  // } catch (error) {
+  //   console.error(error);
+  //   res.status(500).json({ error: 'Error al modificar el estado' });
+  // }
+});
+
+
+
+app.listen(PORT, () => {
+  console.log(`Servidor de suma corriendo en http://localhost:${PORT}`);
+});
+
 
 
 app.post('/login', (req, res) => {
@@ -98,24 +150,10 @@ app.post('/login', (req, res) => {
   }
 });
 
-app.put('/estado/:id', async (req, res) => {
-  const idUsuario = req.params.id;
-  const estado= false;
-  try {
-    // Realiza la solicitud PUT sin pasar ningún dato en el cuerpo de la solicitud
-    const response  = await axios.put(`http://localhost:4004/estado/${idUsuario}`, { estado });
-    res.status(200).json(response.data)
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Error al modificar el estado' });
-  }
-});
 
 
 
-app.listen(PORT, () => {
-  console.log(`Servidor de suma corriendo en http://localhost:${PORT}`);
-});
+
 
 
 // app.get('/sum', verifyToken, async (req, res) => {
