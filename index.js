@@ -154,11 +154,11 @@ app.get('/roles', async (req, res) => {
 
 
 
-app.put('/roles/:id', verifyToken, async (req, res) => {
+app.put('/roles/:id', async (req, res) => {
   const userId = req.params.id;
   const { rol } = req.body;
   try {
-    const response = await axios.put(`http://localhost:4004/roles/${userId}`, { rol });
+    const response = await axios.put(`http://localhost:4002/roles/${userId}`, { rol });
     res.status(200).json(response.data);
   } catch (error) {
     console.error(error);

@@ -85,19 +85,6 @@ async function getOptionsForSelect(selectedRoleId) {
     return optionsHtml;
 }
 
-async function getOptionsForSelect(selectedRoleId) {
-    let optionsHtml = '';
-    const responseRoles = await axios.get('http://localhost:4000/roles');
-    const roles = responseRoles.data;
-    roles.forEach((rol) => {
-        const selected = rol.id === selectedRoleId ? 'selected' : '';
-        optionsHtml += `<option value="${rol.id}" ${selected}>${rol.nombrerol}</option>`;
-    });
-    return optionsHtml;
-}
-
-
-
 
 async function cambiarEstado(id, event) {
     event.preventDefault();
@@ -113,7 +100,7 @@ async function cambiarEstado(id, event) {
         alert("Error al cambiar el estado");
     }
     updateTablaUsuarios();
-    // location.reload();
+
 }
 
 async function cambiarRoles(id, rol) {
@@ -126,5 +113,4 @@ async function cambiarRoles(id, rol) {
         alert("Error al cambiar el rol");
     }
     updateTablaUsuarios();
-    // location.reload();
 }
