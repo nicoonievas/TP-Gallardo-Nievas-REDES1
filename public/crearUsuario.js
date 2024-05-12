@@ -18,7 +18,7 @@ async function crearUsuario(event) {
         });
         if (response.data && response.data.message) {
             const data = response.data;
-            alert(data.message); 
+            alert(data.message);
             console.log(userdata);
             location.reload();
             // return false;
@@ -34,29 +34,34 @@ async function crearUsuario(event) {
 
 async function updateTablaUsuarios() {
     try {
-        const response = await axios.get('http://localhost:4000/getusers');
-        const usuarios = response.data.registros; 
-        
+        const responseUsuarios = await axios.get('http://localhost:4000/getusers');
+        const usuarios = responseUsuarios.data.registros;
+
         console.log(usuarios);
         const tbody = document.querySelector('#tablaUsuarios tbody');
-        
+
         tbody.innerHTML = '';
 
-        usuarios.forEach(usuario => {
+        usuarios.forEach(async (usuario) => {
             const tr = document.createElement('tr');
-            
-            if (usuario.estado == true) {
-                estado = "Desactivar"
+
+            if (usuario.estado) {
+                estado = "Desactivar";
+            } else {
+                estado = "Activar";
             }
-            else {
-                estado = "Activar"
-            }
+
             tr.innerHTML = `
                 <td>${usuario.nombre}</td>
                 <td>${usuario.apellido}</td>
                 <td>${usuario.username}</td>
                 <td>
-                <button onclick="cambiarEstado(${usuario.id}, event)" style="background-color: #4A1FA6; color:white;">${estado}</button>
+                    <button onclick="cambiarEstado(${usuario.id}, event)" style="background-color: #4A1FA6; color:white;">${estado}</button>
+                </td>
+                <td>
+                    <select id="selectRoles${usuario.id}" onchange="cambiarRoles(${usuario.id}, this.value)" style="background-color: #4A1FA6; color:white;">
+                        ${await getOptionsForSelect(usuario.rol)}
+                    </select>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -66,6 +71,32 @@ async function updateTablaUsuarios() {
         alert("Error al obtener los datos");
     }
 }
+
+async function getOptionsForSelect(selectedRoleId) {
+    let optionsHtml = '';
+    const responseRoles = await axios.get('http://localhost:4000/roles');
+    const roles = responseRoles.data;
+
+    roles.forEach((rol) => {
+        const selected = rol.id === selectedRoleId ? 'selected' : '';
+        optionsHtml += `<option value="${rol.id}" ${selected}>${rol.nombrerol}</option>`;
+    });
+
+    return optionsHtml;
+}
+
+async function getOptionsForSelect(selectedRoleId) {
+    let optionsHtml = '';
+    const responseRoles = await axios.get('http://localhost:4000/roles');
+    const roles = responseRoles.data;
+    roles.forEach((rol) => {
+        const selected = rol.id === selectedRoleId ? 'selected' : '';
+        optionsHtml += `<option value="${rol.id}" ${selected}>${rol.nombrerol}</option>`;
+    });
+    return optionsHtml;
+}
+
+
 
 
 async function cambiarEstado(id, event) {
@@ -80,6 +111,19 @@ async function cambiarEstado(id, event) {
     } catch (error) {
         console.error(error);
         alert("Error al cambiar el estado");
+    }
+    updateTablaUsuarios();
+    // location.reload();
+}
+
+async function cambiarRoles(id, rol) {
+    try {
+        const response = await axios.put('http://localhost:4000/roles/' + id, { rol });
+        const data = response.data
+        alert(data.message);
+    } catch (error) {
+        console.error(error);
+        alert("Error al cambiar el rol");
     }
     updateTablaUsuarios();
     // location.reload();

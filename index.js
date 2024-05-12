@@ -142,8 +142,29 @@ app.post('/login', (req, res) => {
 });
 
 
+app.get('/roles', async (req, res) => {
+  try {
+    const response = await axios.get('http://localhost:4003/roles');
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener los roles' });
+  }
+});
 
 
+
+app.put('/roles/:id', verifyToken, async (req, res) => {
+  const userId = req.params.id;
+  const { rol } = req.body;
+  try {
+    const response = await axios.put(`http://localhost:4004/roles/${userId}`, { rol });
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al cambiar el rol' });
+  }
+})
 
 
 

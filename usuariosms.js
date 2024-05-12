@@ -59,21 +59,34 @@ app.post('/createuser', async (req, res) => {
   }
 });
 
-
-
-
-app.delete('/delete/:id', async (req, res) => {
-  const id = req.params.id;
+app.put('/roles/:id', async (req, res) => {
+  const userId = req.params.id;
+  const rol = req.body.rol;
   try {
     const client = await pool.connect();
-    await client.query(`DELETE FROM generated_numbers WHERE id = ${id}`);
+    await client.query(`UPDATE users SET rol = '${rol}' WHERE id = ${userId}`);
     client.release();
-    res.json({ message: 'Registro eliminado correctamente' });
+    res.json({ message: 'Rol modificado correctamente' });
   } catch (err) {
     console.error('Error al ejecutar la query', err);
-    res.status(500).json({ error: 'Error al eliminar el registro' });
+    res.status(500).json({ error: 'Error al modificar el rol' });
   }
 });
+
+
+// app.delete('/delete/:id', async (req, res) => {
+//   const id = req.params.id;
+//   try {
+//     const client = await pool.connect();
+//     await client.query(`DELETE FROM generated_numbers WHERE id = ${id}`);
+//     client.release();
+//     res.json({ message: 'Registro eliminado correctamente' });
+//   } catch (err) {
+//     console.error('Error al ejecutar la query', err);
+//     res.status(500).json({ error: 'Error al eliminar el registro' });
+//   }
+// });
+
 
 
 app.listen(PORT2, () => {

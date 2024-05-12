@@ -42,6 +42,19 @@ app.get('/listausuarios/:id', async (req, res) => {
 });
 
 
+app.get('/roles', async (req, res) => {
+  try {
+    const client = await pool.connect();
+    const result = await client.query('SELECT * FROM roles');
+    client.release();
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error al ejecutar la query', err);
+    res.status(500).json({ error: 'Error al obtener los roles' });
+  }
+});
+
+
 // app.delete('/delete/:id', async (req, res) => {
 //   const id = req.params.id;
 //   try {
