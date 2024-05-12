@@ -114,21 +114,12 @@ app.put('/estado/:id', async (req, res) => {
 
     const response  = await axios.put(`http://localhost:4004/estado/${idUsuario}`, { estado });
     res.status(200).json(response.data)
-    // res.json({ responseusuario });
+    // res.json({ response });
  
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Error al obtener los registros' });
+    res.status(500).json({ error: 'Error al modificar el estado' });
   }
- 
-  // try {
-  //   // Realiza la solicitud PUT sin pasar ningún dato en el cuerpo de la solicitud
-  //   const response  = await axios.put(`http://localhost:4004/estado/${idUsuario}`, { estado });
-  //   res.status(200).json(response.data)
-  // } catch (error) {
-  //   console.error(error);
-  //   res.status(500).json({ error: 'Error al modificar el estado' });
-  // }
 });
 
 
