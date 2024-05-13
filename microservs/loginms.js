@@ -20,7 +20,7 @@ app.post('/validar', async (req, res) => {
   try {
       const client = await pool.connect();
       const result = await client.query('SELECT * FROM users WHERE username = $1 AND password = $2', [username, password]);
-      console.log(result.rows);
+
     
       client.release();
       if (result.rows.length > 0) {

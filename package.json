@@ -5,7 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "listaUsuarios": "node microservs/listarusuariosms.js",
+    "estadoUsuarios": "node microservs/estadoms.js",
+    "api": "node microservs/apims.js",
+    "login": "node microservs/loginms.js",
+    "crearUsuarios": "node microservs/usuariosms.js"
   },
   "keywords": [],
   "author": "",

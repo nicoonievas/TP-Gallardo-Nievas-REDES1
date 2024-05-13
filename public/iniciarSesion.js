@@ -6,15 +6,17 @@ async function login() {
         const response = await axios.post('http://localhost:4000/login', userdata);
         if (response.data && response.data.token) {
             localStorage.setItem('token', response.data.token);
-            alert("Usuario logueado con exito");
+            alert("Usuario logueado con éxito");
             window.location.href = "panelControl.html";
-            // return false;
         } else {
             alert('Usuario y/o contraseña incorrectos');
         }
     } catch (error) {
         console.error(error);
-        alert("Error al iniciar sesion");
+        if (error.response && error.response.status === 401) {
+            alert('Usuario desactivado');
+        } else {
+            alert("Error al iniciar sesión");
+        }
     }
 }
-

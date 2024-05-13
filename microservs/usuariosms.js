@@ -60,11 +60,11 @@ app.post('/createuser', async (req, res) => {
 });
 
 app.put('/roles/:id', async (req, res) => {
-  const userId = req.params.id;
+  const usuarioId = req.params.id;
   const rol = req.body.rol;
   try {
     const client = await pool.connect();
-    await client.query(`UPDATE users SET rol = '${rol}' WHERE id = ${userId}`);
+    await client.query(`UPDATE users SET rol = '${rol}' WHERE id = ${usuarioId}`);
     client.release();
     res.json({ message: 'Rol modificado correctamente' });
   } catch (err) {

@@ -21,7 +21,7 @@ async function crearUsuario(event) {
         if (response.data && response.data.message) {
             const data = response.data;
             alert(data.message);
-            console.log(userdata);
+
             location.reload();
             // return false;
         } else {
@@ -36,7 +36,7 @@ async function crearUsuario(event) {
 
 async function updateTablaUsuarios() {
     const token = getToken();
-    console.log(token);
+
     const headers = {
         'Content-Type': 'application/json'
     };
@@ -97,7 +97,6 @@ async function getOptionsForSelect(selectedRoleId) {
 
 
 async function cambiarEstado(id, event) {
-    event.preventDefault();
     try {
         const confirmacion = confirm('¿Estás seguro de que deseas modificar el estado de este cliente?');
         if (confirmacion) {
@@ -113,8 +112,16 @@ async function cambiarEstado(id, event) {
 }
 
 async function cambiarRoles(id, rol) {
+    const token = getToken();
+
+    const headers = {
+        'Content-Type': 'application/json'
+    };
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
     try {
-        const response = await axios.put('http://localhost:4000/roles/' + id, { rol });
+        const response = await axios.put('http://localhost:4000/roles/' + id, { rol }, { headers: headers });
         const data = response.data
         alert(data.message);
     } catch (error) {

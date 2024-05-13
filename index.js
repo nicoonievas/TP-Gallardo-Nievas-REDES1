@@ -33,6 +33,7 @@ const verifyToken = (req, res, next) => {
       return res.status(401).json({ error: 'Token inválido' });
     }
     req.user = decoded;
+    console.log(req.user);
     next();
   });
 };
@@ -98,18 +99,24 @@ app.post('/login', async (req, res) => {
       const response = await axios.post('http://localhost:4006/validar', { username, password });
   
       if (response.data.success) {
-         const userData = response.data.userData;
+          const userData = response.data.userData;
+          const estado = userData[0].estado;         
+          console.log(estado);
+          if (!estado) {
+              return res.status(401).json({ error: 'Usuario desactivado' });
+          }
           const userId = userData[0].id;
           const token = generateToken({ userId });
-          res.status(200).json({ token });
+          console.log(userId);
+          return res.status(200).json({ token });
       } else {
-          res.status(200).json({ error: 'Credenciales incorrectas' });
+          return res.status(200).json({ error: 'Credenciales incorrectas' });
       }
   } catch (error) {
       if (error.response) {
-          res.status(error.response.status).json({ error: error.response.data.error });
+          return res.status(error.response.status).json({ error: error.response.data.error });
       } else {
-          res.status(500).json({ error: 'Error interno del servidor' });
+          return res.status(500).json({ error: 'Error interno del servidor' });
       }
   }
 });
@@ -118,7 +125,7 @@ app.post('/login', async (req, res) => {
 
 
 
-app.get('/getusers', [verifyToken, verifyRol], async (req, res) => {
+app.get('/getusers', verifyToken, async (req, res) => {
   try {
     const response = await axios.get('http://localhost:4003/listausuarios');
     let registros = response.data;
@@ -130,7 +137,7 @@ app.get('/getusers', [verifyToken, verifyRol], async (req, res) => {
   }
 });
 
-app.get('/getusers/:id', verifyRol, async (req, res) => {
+app.get('/getusers/:id', verifyToken, async (req, res) => {
   const id = req.params.id;
 
   try {
@@ -139,12 +146,12 @@ app.get('/getusers/:id', verifyRol, async (req, res) => {
     res.json({ registros });
 
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     res.status(500).json({ error: 'Error al obtener los registros' });
   }
 });
 
-app.put('/estado/:id', async (req, res) => {
+app.put('/estado/:id' , async (req, res) => {
   const idUsuario = req.params.id;
   try {
     const responseusuario = await axios.get(`http://localhost:4003/listausuarios/${idUsuario}`);
@@ -154,6 +161,7 @@ app.put('/estado/:id', async (req, res) => {
       estado = false;
     } else {
       estado = true;
+      
     }
 
     const response  = await axios.put(`http://localhost:4004/estado/${idUsuario}`, { estado });
@@ -179,11 +187,11 @@ app.get('/roles', async (req, res) => {
 
 
 
-app.put('/roles/:id', async (req, res) => {
-  const userId = req.params.id;
+app.put('/roles/:id',  [verifyToken, verifyRol], async (req, res) => {
+  const usuarioId = req.params.id;
   const { rol } = req.body;
   try {
-    const response = await axios.put(`http://localhost:4002/roles/${userId}`, { rol });
+    const response = await axios.put(`http://localhost:4002/roles/${usuarioId}`, { rol });
     res.status(200).json(response.data);
   } catch (error) {
     console.error(error);
@@ -192,7 +200,7 @@ app.put('/roles/:id', async (req, res) => {
 })
 
 
-app.get('/translate/:text', verifyToken, verifyRol, async (req, res) => {
+app.get('/translate/:text', [verifyToken, verifyRol], async (req, res) => {
   const text = req.params.text;
   try {
     const translated = await axios.get(`http://localhost:4005/translate/${encodeURIComponent(text)}`);
