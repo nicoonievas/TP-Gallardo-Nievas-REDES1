@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
 
 const verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
-
+console.log(authHeader);
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Token no proporcionado' });
   }
@@ -36,6 +36,14 @@ const verifyToken = (req, res, next) => {
     next();
   });
 };
+
+const verifyRol = (req, res, next) => {
+  let rol = req.username;
+  if (rol !== 'admin') {
+    return res.status(403).json({ error: 'Rol no autorizado' });
+  }
+  next();
+}
 
 //Genera Token
 const generateToken = (user) => {
@@ -72,9 +80,31 @@ app.post('/createuser', async (req, res) => {
   }
 });
 
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+  
+  try {
+    const response = await axios.post('http://localhost:4006/validar', { username, password });
+
+    if (response.data.success) {
+      const token = generateToken({ username });
+      console.log(token);
+      res.status(200).json({ token });
+    } else {
+      res.status(200).json({ error: 'Credenciales incorrectas' });
+    }
+  } catch (error) {
+    if (error.response) {
+      res.status(error.response.status).json({ error: error.response.data.error });
+    } else {
+      res.status(500).json({ error: 'Error interno del servidor' });
+    }
+  }
+});
 
 
-app.get('/getusers', async (req, res) => {
+
+app.get('/getusers', verifyToken, async (req, res) => {
   try {
     const response = await axios.get('http://localhost:4003/listausuarios');
     let registros = response.data;
@@ -123,25 +153,6 @@ app.put('/estado/:id', async (req, res) => {
 });
 
 
-
-app.listen(PORT, () => {
-  console.log(`Servidor de suma corriendo en http://localhost:${PORT}`);
-});
-
-
-
-app.post('/login', (req, res) => {
-  const { username, password } = req.body;
-  //Lógica de user y pass
-  if (username === 'raul' && password === '1234') {
-    const token = generateToken({ username });
-    res.json({ token }); //Devuelve token con 1h. de validez
-  } else {
-    res.status(401).json({ error: 'Credenciales incorrectas' });
-  }
-});
-
-
 app.get('/roles', async (req, res) => {
   try {
     const response = await axios.get('http://localhost:4003/roles');
@@ -167,7 +178,7 @@ app.put('/roles/:id', async (req, res) => {
 })
 
 
-app.get('/translate/:text', async (req, res) => {
+app.get('/translate/:text', verifyToken, verifyRol('admin'), async (req, res) => {
   const text = req.params.text;
   try {
     const translated = await axios.get(`http://localhost:4005/translate/${encodeURIComponent(text)}`);
@@ -181,40 +192,6 @@ app.get('/translate/:text', async (req, res) => {
   }
 });
 
-
-// app.get('/sum', verifyToken, async (req, res) => {
-//   try {
-
-//     const { data: { num1, num2 } } = await axios.get('http://localhost:6001/random');
-//     const suma = num1 + num2;
-//     res.json({ suma });
-
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'Error al sumar los números' });
-//   }
-// });
-
-
-// app.get('/registros', verifyToken, async (req, res) => {
-//   try {
-//     const response = await axios.get('http://localhost:6001/all_registers');
-//     const registros = response.data;
-//     res.json({ registros });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'Error al obtener los registros' });
-//   }
-// });
-
-
-// app.delete('/:id', verifyToken, async (req, res) => {
-//   const id = req.params.id;
-//   try {
-//     await axios.delete(`http://localhost:6001/delete/${id}`);
-//     res.json({ message: 'Registro eliminado correctamente' });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'Error al eliminar el registro - PORT 6000' });
-//   }
-// });
+app.listen(PORT, () => {
+  console.log(`Servidor de suma corriendo en http://localhost:${PORT}`);
+});

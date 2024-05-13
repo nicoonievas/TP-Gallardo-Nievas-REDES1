@@ -1,4 +1,6 @@
-
+function getToken() {
+    return localStorage.getItem('token');
+}
 async function crearUsuario(event) {
     event.preventDefault();
     const nombre = document.getElementById("nombre").value;
@@ -33,8 +35,16 @@ async function crearUsuario(event) {
 }
 
 async function updateTablaUsuarios() {
+    const token = getToken();
+    console.log(token);
+    const headers = {
+        'Content-Type': 'application/json'
+    };
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
     try {
-        const responseUsuarios = await axios.get('http://localhost:4000/getusers');
+        const responseUsuarios = await axios.get('http://localhost:4000/getusers', { headers: headers });
         const usuarios = responseUsuarios.data.registros;
 
         console.log(usuarios);
