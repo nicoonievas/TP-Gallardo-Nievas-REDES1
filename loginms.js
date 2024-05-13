@@ -15,21 +15,22 @@ const pool = new Pool({
   }
 });
 
-
 app.post('/validar', async (req, res) => {
-    const { username, password } = req.body;
+  const { username, password } = req.body;
   try {
-    const client = await pool.connect();
-    const result = await client.query('SELECT * FROM users WHERE username = $1 AND password = $2', [username, password]);
-    client.release();
-    if (result.rows.length > 0) {
-        res.status(200).json({ success: true});
+      const client = await pool.connect();
+      const result = await client.query('SELECT * FROM users WHERE username = $1 AND password = $2', [username, password]);
+      console.log(result.rows);
+    
+      client.release();
+      if (result.rows.length > 0) {
+          res.status(200).json({ success: true, userData: result.rows });
       } else {
-        res.status(200).json({ success: false});
+          res.status(200).json({ success: false });
       }
   } catch (err) {
-    console.error('Error al ejecutar la query', err);
-    res.status(500).json({ error: 'Error de servidor' });
+      console.error('Error al ejecutar la query', err);
+      res.status(500).json({ error: 'Error de servidor' });
   }
 });
 

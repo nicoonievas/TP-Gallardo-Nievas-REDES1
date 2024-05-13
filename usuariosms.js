@@ -42,7 +42,7 @@ app.post('/createuser', async (req, res) => {
   const password = datacliente.password;
   const nombre = datacliente.nombre;
   const apellido = datacliente.apellido;
-  const rol = datacliente.rol;
+  const rol = 2;
   const estado = datacliente.estado;
   const createdAt = new Date(); // Genera la fecha actual
 

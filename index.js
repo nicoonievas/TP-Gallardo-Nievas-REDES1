@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
 
 const verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
-console.log(authHeader);
+
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Token no proporcionado' });
   }
@@ -37,13 +37,24 @@ console.log(authHeader);
   });
 };
 
-const verifyRol = (req, res, next) => {
-  let rol = req.username;
-  if (rol !== 'admin') {
-    return res.status(403).json({ error: 'Rol no autorizado' });
+
+const verifyRol = async (req, res, next) => {
+  try { 
+    const usuarioId = req.user.userId; // Accede al userId desde req.user
+    const userdata = await axios.get('http://localhost:4003/listausuarios/' + usuarioId)
+    const rolUsuario = userdata.data.rol;
+    console.log(rolUsuario);
+    if (rolUsuario !== 1) { 
+      return res.status(403).json({ error: 'Rol no autorizado' });
+    }
+    
+    next(); // Llama a next() solo si el usuario tiene el rol 'admin'
+  } catch (error) {
+    console.error('Error al verificar el rol:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
-  next();
-}
+};
+
 
 //Genera Token
 const generateToken = (user) => {
@@ -80,31 +91,34 @@ app.post('/createuser', async (req, res) => {
   }
 });
 
+
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
-  
   try {
-    const response = await axios.post('http://localhost:4006/validar', { username, password });
-
-    if (response.data.success) {
-      const token = generateToken({ username });
-      console.log(token);
-      res.status(200).json({ token });
-    } else {
-      res.status(200).json({ error: 'Credenciales incorrectas' });
-    }
+      const response = await axios.post('http://localhost:4006/validar', { username, password });
+  
+      if (response.data.success) {
+         const userData = response.data.userData;
+          const userId = userData[0].id;
+          const token = generateToken({ userId });
+          res.status(200).json({ token });
+      } else {
+          res.status(200).json({ error: 'Credenciales incorrectas' });
+      }
   } catch (error) {
-    if (error.response) {
-      res.status(error.response.status).json({ error: error.response.data.error });
-    } else {
-      res.status(500).json({ error: 'Error interno del servidor' });
-    }
+      if (error.response) {
+          res.status(error.response.status).json({ error: error.response.data.error });
+      } else {
+          res.status(500).json({ error: 'Error interno del servidor' });
+      }
   }
 });
 
 
 
-app.get('/getusers', verifyToken, async (req, res) => {
+
+
+app.get('/getusers', [verifyToken, verifyRol], async (req, res) => {
   try {
     const response = await axios.get('http://localhost:4003/listausuarios');
     let registros = response.data;
@@ -116,7 +130,7 @@ app.get('/getusers', verifyToken, async (req, res) => {
   }
 });
 
-app.get('/getusers/:id', async (req, res) => {
+app.get('/getusers/:id', verifyRol, async (req, res) => {
   const id = req.params.id;
 
   try {
@@ -178,19 +192,18 @@ app.put('/roles/:id', async (req, res) => {
 })
 
 
-app.get('/translate/:text', verifyToken, verifyRol('admin'), async (req, res) => {
+app.get('/translate/:text', verifyToken, verifyRol, async (req, res) => {
   const text = req.params.text;
   try {
     const translated = await axios.get(`http://localhost:4005/translate/${encodeURIComponent(text)}`);
   
     res.json(translated.data);
-
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error al obtener la traducción' });
   }
 });
+
 
 app.listen(PORT, () => {
   console.log(`Servidor de suma corriendo en http://localhost:${PORT}`);
