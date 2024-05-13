@@ -16,7 +16,7 @@ const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET;
 
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/crearUsuario.html');
+  res.sendFile(__dirname + '/public/panelControl.html');
 });
 
 const verifyToken = (req, res, next) => {
