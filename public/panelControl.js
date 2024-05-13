@@ -52,9 +52,9 @@ async function updateTablaUsuarios() {
             }
 
             tr.innerHTML = `
+                <td>${usuario.username}</td>
                 <td>${usuario.nombre}</td>
                 <td>${usuario.apellido}</td>
-                <td>${usuario.username}</td>
                 <td>
                     <button onclick="cambiarEstado(${usuario.id}, event)" style="background-color: #4A1FA6; color:white;">${estado}</button>
                 </td>
