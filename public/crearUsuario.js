@@ -100,7 +100,6 @@ async function cambiarEstado(id, event) {
         alert("Error al cambiar el estado");
     }
     updateTablaUsuarios();
-
 }
 
 async function cambiarRoles(id, rol) {

@@ -167,6 +167,20 @@ app.put('/roles/:id', async (req, res) => {
 })
 
 
+app.get('/translate/:text', async (req, res) => {
+  const text = req.params.text;
+  try {
+    const translated = await axios.get(`http://localhost:4005/translate/${encodeURIComponent(text)}`);
+  
+    res.json(translated.data);
+
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener la traducción' });
+  }
+});
+
 
 // app.get('/sum', verifyToken, async (req, res) => {
 //   try {
